@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "@bcad1591/react-date-picker": "^0.1.1",
+    "react": "^18.2.0",
+    "react-dater": "^1.6.0",
+    "react-select": "^5.7.0",
+    "react-tailwindcss-datepicker": "^1.1.1",
+    "select": "^1.1.2"
+  }
+}

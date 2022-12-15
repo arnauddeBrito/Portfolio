@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'TripSans Regular';
+  font-style: normal;
+  src: local('TripSans Regular'), url(/TripSans-Regular.ttf) format('truetype');
+}
+
+:root {
+  font-family: 'TripSans Regular';
+}
+
+._3curk{
+  z-index: 20;
+}

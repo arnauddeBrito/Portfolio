@@ -1,0 +1,18 @@
+:root{
+  --primary-color: #1F456E;
+  --card-grey:#f8f8f8;
+  --primary-text: #2c2c2c;
+  --secondary-text: #a79997;
+  --default-transition: 0.5s ease-in-out;
+}
+
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body{
+  margin : 0 5rem;
+  margin-top: 2rem;
+}

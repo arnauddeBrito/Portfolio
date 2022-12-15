@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title> Diabetes Study </title>
+	</head>
+	<body>
+		<h1> Diabetes Study </h1>
+		<p> We chose to study the diabetes databases, here is our result on the project. </p>
+		{{leprint}}
+		
+		<h3> Here are the datas as we collected them. </h3>
+		{{cleaned|safe}}
+		
+		<h3> And here are the datas after we cleaned them. </h3>
+		{{head|safe}}
+		
+		{{ heatmap_html|safe }}
+		
+		<h3> Here you can see the repartition of drugs and how much they were combined </h3>
+		{{ lign_html|safe }}
+		
+		<h3> Here is the time spend in the hospital depending on the number of medication that is taken </h3>
+		{{ bar_html|safe }}
+	</body>
+</html>

@@ -1,0 +1,171 @@
+---
+title: "Compte Rendu Competition Kaggle"
+output: html_document
+date: "2022-12-09"
+---
+
+LE FOURN Constance
+DE BRITO Arnaud
+
+## Kaggle competition report
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+ *Introduction*
+
+
+```{r echo=TRUE, eval=TRUE}
+train <- read.csv("~/Documents/Arnaud/Machine Learning/train.csv")
+test <- read.csv("~/Documents/Arnaud/Machine Learning/test.csv")
+```
+```{r echo=TRUE, eval=TRUE}
+head(train,2)
+head(test,2)
+```
+  We worked on the energy consumption dataset. We need to predict the number of appliances used depending on the different features like the temperature, humidity rate, windspeed ... We had only numerical data except for the days of the week that were in string values. 
+  Let's try different models to predict Appliances :
+  
+*Multiple linear regression*
+
+```{r echo=TRUE, eval=TRUE}
+model<-lm(Appliances~.,data=train)
+```
+
+```{r echo=TRUE, eval=TRUE}
+prediction=predict(model,newdata=test)
+```
+``'
+Comparison result : 91.30
+
+We could use the mean squared error f we had value to be compared to the predition. However, the test values aren't labalized. We could have used the train dataset, split it and transform it in two and have a test ing and training dataset. The only problem is if we had done that the regression would have been even worse.
+With this result, we see that the multiple regression is not a very good model to predict the test's Appliances.
+Let's see if we can do better
+
+*Decision tree*
+
+
+```{r echo=TRUE, eval=TRUE}
+library("rpart")
+library("rpart.plot")
+train_tree=rpart(Appliances~.,data=train)
+plot(train_tree)
+text(train_tree,pretty=0)
+title(main="Regression tree")
+```
+
+```{r echo=TRUE, eval=TRUE}
+train_tree<-prune(train_tree,cp=0.01004078)
+library(rpart.plot)
+rpart.plot(train_tree)
+summary(train_tree)
+```
+
+```{r echo=TRUE, eval=TRUE}
+
+```
+
+```{r echo=TRUE, eval=TRUE}
+train_tree_predict=predict(train_tree,new_data=test)
+```
+
+Comparison result : 67.84
+This model seems better that the first one. 
+
+*Random Forest Bagging*
+
+
+```{r echo=TRUE, eval=TRUE}
+library(randomForest)
+train_bagging=randomForest(Appliances~.,data=train, mtry=13, importance=TRUE, ntrees=500)
+train_bagging
+```
+
+```{r echo=TRUE, eval=TRUE}
+train_bagging_pred=predict(train_bagging,newdata=test)
+```
+  With  the bagging, we can see that 52% of the variables are explained by the algorithm.
+  
+  Comparison result : 66.40
+
+*Random Forest*
+```{r echo=TRUE, eval=TRUE}
+train_forest1=randomForest(Appliances~.,data=train, mtry=4, importance=TRUE, ntrees=500)
+train_forest1
+```
+  With  the bagging, we can see that 54.15% of the variables are explained by the algorithm.
+  Comparison result : 66.31
+
+```{r echo=TRUE, eval=TRUE}
+train_forest2=randomForest(Appliances~.,data=train, mtry=60, importance=TRUE, ntrees=500)
+train_forest2
+# mtry too big
+```
+With  the bagging, we can see that 50,91% of the variables are explained by the algorithm.
+We didn't create prediction of this model because the previous one had a higher score.
+
+```{r echo=TRUE, eval=TRUE}
+train_forest3=randomForest(Appliances~.,data=train, mtry=4, importance=TRUE, ntrees=1500)
+train_forest3
+```
+With  the bagging, we can see that 53.93% of the variables are explained by the algorithm.
+We didn't crate prediction of this model because the previous one had a higher score.
+```{r echo=TRUE, eval=TRUE}
+train_forest4=randomForest(Appliances~.,data=train, mtry=2, importance=TRUE, ntrees=500)
+train_forest4
+```
+With  the bagging, we can see that 53.09% of the variables are explained by the algorithm.
+We didn't crate prediction of this model because the previous one had a higher score.
+```{r echo=TRUE, eval=TRUE}
+train_forest5=randomForest(Appliances~.-Windspeed,data=train, mtry=4, importance=TRUE, ntrees=500)
+train_forest5
+```
+With  the bagging, we can see that 53.91% of the variables are explained by the algorithm.
+We didn't crate prediction of this model because the previous one had a higher score.
+```{r echo=TRUE, eval=TRUE}
+train_forest6=randomForest(Appliances~.-Windspeed-Visibility-rv1-rv2,data=train, mtry=4, importance=TRUE, ntrees=1500)
+train_forest6
+```
+With  the bagging, we can see that 54.09 of the variables are explained by the algorithm.
+Comparison prediction result : 66.54
+
+```{r echo=TRUE, eval=TRUE}
+train_forest_pred=predict(train_forest1,newdata=test)
+```
+We chose the train forest number 3 because it was the one with the stronger prediction rate.
+
+
+Of all the prediction that we did the Random forest was the better one to predict n our dataset.
+
+
+We, then, tried to find somme better models by choosing only some of the features
+
+*ACP*
+
+```{r echo=TRUE, eval=TRUE}
+library(FactoMineR)
+library(factoextra)
+res.pca <-PCA(train[1:28],graph=TRUE)
+```
+
+As we can see on the graph the majority of the feature are related with the number of appliances in the house. Moreover, we can also see that the RH6 (Humdity) and RH_out (outdoor humidity) are negativly related.
+The value near the circle have a good representation in the plan.
+```{r echo=TRUE, eval=TRUE}
+eig.val<-get_eigenvalue(res.pca)
+eig.val
+```
+
+```{r echo=TRUE, eval=TRUE}
+library("devtools")
+fviz_eig(res.pca,addlabels=TRUE,ylim=c(0,50))
+```
+
+```{r echo=TRUE, eval=TRUE}
+cor(train$Appliances,train$lights)
+```
+
+*Conclusion*
+Here the best model that we could use is random forest (mtry=4, importance=TRUE , ntrees=500), we probably could find a better fit if we ajust the features but we didn't had the time to do that.
+
+```
